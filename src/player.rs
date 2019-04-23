@@ -6,7 +6,6 @@ pub trait Player {
     fn get_move(&self, board: &Board) -> (usize, usize);
 }
 
-
 pub struct MinimaxPlayer(pub char);
 
 impl Player for MinimaxPlayer {

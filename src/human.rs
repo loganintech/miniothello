@@ -1,6 +1,6 @@
-use std::io::prelude::*;
-use crate::player::Player;
 use crate::board::Board;
+use crate::player::Player;
+use std::io::prelude::*;
 
 pub struct HumanPlayer(pub char);
 
@@ -27,13 +27,11 @@ impl Player for HumanPlayer {
             std::io::stdin().read_line(&mut col).unwrap();
 
             let rown = match row.trim().parse::<usize>() {
-                Ok(rown) if rown < board.rows() => {
-                    rown
-                },
+                Ok(rown) if rown < board.rows() => rown,
                 Ok(_) => {
                     eprintln!("Your entry is out of range.");
                     continue;
-                },
+                }
                 _ => {
                     eprintln!("You must enter positive numerical numerical values.");
                     continue;
@@ -41,13 +39,11 @@ impl Player for HumanPlayer {
             };
 
             let coln = match col.trim().parse::<usize>() {
-                Ok(coln) if coln < board.cols() => {
-                    coln
-                },
+                Ok(coln) if coln < board.cols() => coln,
                 Ok(_) => {
                     eprintln!("Your entry is out of range.");
                     continue;
-                },
+                }
                 _ => {
                     eprintln!("You must enter positive numerical numerical values.");
                     continue;
