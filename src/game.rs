@@ -267,7 +267,7 @@ impl<'a> Othello<'a> {
         } else if p_two_count > p_one_count {
             Some(format!("Player 2 wins with {} points!", p_two_count))
         } else {
-            Some(format!("It's a tie!"))
+            Some("It's a tie!".to_string())
         }
     }
 }
