@@ -5,4 +5,3 @@ pub trait Player {
 
     fn get_move(&self, board: &Board) -> (usize, usize);
 }
-

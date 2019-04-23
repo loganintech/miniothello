@@ -3,14 +3,13 @@
 mod board;
 mod game;
 mod human;
-mod player;
-mod minimax;
 
+mod minimax;
+mod player;
 use game::Othello;
 use human::*;
 use minimax::*;
 use player::*;
-
 
 use std::env::args;
 
