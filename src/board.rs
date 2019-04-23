@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::{self, Write};
 
+#[derive(Clone)]
 pub struct Board {
     rows: usize,
     cols: usize,
@@ -57,6 +58,16 @@ impl Board {
         });
 
         map
+    }
+
+
+    pub fn get_char_count(&self, symbol: &char) -> Option<usize> {
+        let char_map = self.char_counts();
+        if let Some(count) = char_map.get(symbol) {
+            Some(*count)
+        } else {
+            None
+        }
     }
 }
 

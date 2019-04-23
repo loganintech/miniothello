@@ -67,6 +67,7 @@ impl std::ops::Not for ActivePlayer {
     }
 }
 
+#[derive(Clone)]
 pub struct Othello<'a> {
     p_one: &'a dyn Player,
     p_two: &'a dyn Player,
@@ -87,6 +88,10 @@ impl<'a> Othello<'a> {
             board,
             active_player: ActivePlayer::PlayerOne,
         }
+    }
+
+    pub fn board(&self) -> &Board {
+        &self.board
     }
 
     pub fn active_player(&self) -> ActivePlayer {
@@ -180,8 +185,8 @@ impl<'a> Othello<'a> {
 
     pub fn get_move(&mut self) -> (usize, usize) {
         match self.active_player {
-            ActivePlayer::PlayerOne => self.p_one.get_move(&self.board),
-            ActivePlayer::PlayerTwo => self.p_two.get_move(&self.board),
+            ActivePlayer::PlayerOne => self.p_one.get_move(&self),
+            ActivePlayer::PlayerTwo => self.p_two.get_move(&self),
         }
     }
 

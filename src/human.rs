@@ -1,5 +1,5 @@
-use crate::board::Board;
 use crate::player::Player;
+use crate::game::Othello;
 use std::io::prelude::*;
 
 pub struct HumanPlayer(pub char);
@@ -9,13 +9,8 @@ impl Player for HumanPlayer {
         self.0
     }
 
-    fn get_move(&self, board: &Board) -> (usize, usize) {
-        // let mut stdin = stdin.lock();
-        // let stdin = std::io::stdin();
-        // let mut stdout = stdout.lock();
-        // let mut row = "".to_string();
-        // let mut col = "".to_string();
-
+    fn get_move(&self, game: &Othello) -> (usize, usize) {
+        let board = game.board();
         loop {
             let mut row = "".to_string();
             let mut col = "".to_string();
