@@ -1,5 +1,5 @@
-use crate::player::Player;
 use crate::game::Othello;
+use crate::player::Player;
 use std::io::prelude::*;
 
 pub struct HumanPlayer(pub char);

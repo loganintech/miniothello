@@ -47,19 +47,26 @@ impl Board {
         self.grid.iter().all(|row| row.iter().all(Option::is_some))
     }
 
+    pub fn empty_spaces(&self) -> usize {
+        let mut max = self.rows() * self.cols();
+        let counts = self.char_counts();
+        for (_, count) in counts {
+            max -= count;
+        }
+
+        max
+    }
+
     pub fn char_counts(&self) -> HashMap<char, usize> {
         let mut map = HashMap::new();
         self.grid.iter().for_each(|row| {
-            row.iter()
-                .filter_map(|&x| x)
-                .for_each(|symbol| {
-                    map.entry(symbol).and_modify(|y| *y += 1).or_insert(1);
-                })
+            row.iter().filter_map(|&x| x).for_each(|symbol| {
+                map.entry(symbol).and_modify(|y| *y += 1).or_insert(1);
+            })
         });
 
         map
     }
-
 
     pub fn get_char_count(&self, symbol: &char) -> Option<usize> {
         let char_map = self.char_counts();
