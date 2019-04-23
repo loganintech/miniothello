@@ -68,8 +68,8 @@ impl std::ops::Not for ActivePlayer {
 }
 
 pub struct Othello<'a> {
-    p_one: &'a Player,
-    p_two: &'a Player,
+    p_one: &'a dyn Player,
+    p_two: &'a dyn Player,
     active_player: ActivePlayer,
     board: Board,
 }
