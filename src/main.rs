@@ -4,10 +4,13 @@ mod board;
 mod game;
 mod human;
 mod player;
+mod minimax;
 
 use game::Othello;
 use human::*;
+use minimax::*;
 use player::*;
+
 
 use std::env::args;
 
@@ -43,6 +46,7 @@ fn main() {
 
         if !p1_success && !p2_success {
             eprintln!("Both players failed to play");
+            break;
         }
     }
 
