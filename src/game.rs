@@ -89,8 +89,8 @@ impl<'a> Othello<'a> {
         }
     }
 
-    pub fn active_player(&self) -> &ActivePlayer {
-        &self.active_player
+    pub fn active_player(&self) -> ActivePlayer {
+        *&self.active_player
     }
 
     pub fn has_more_moves(&self) -> bool {
@@ -197,7 +197,7 @@ impl<'a> Othello<'a> {
         );
 
         let mut found_valid_move = false;
-        while !found_valid_move && self.player_has_more_moves(*self.active_player()) {
+        while !found_valid_move && self.player_has_more_moves(self.active_player()) {
             let (row, col) = self.get_move();
             if !self.is_legal_move(row, col, self.get_active_symbol()) {
                 println!("Invalid move.");

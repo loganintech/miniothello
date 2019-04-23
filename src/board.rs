@@ -50,8 +50,8 @@ impl Board {
         let mut map = HashMap::new();
         self.grid.iter().for_each(|row| {
             row.iter()
-                .filter_map(|x| if let Some(x) = x { Some(x) } else { None })
-                .for_each(|&symbol| {
+                .filter_map(|&x| x)
+                .for_each(|symbol| {
                     map.entry(symbol).and_modify(|y| *y += 1).or_insert(1);
                 })
         });
