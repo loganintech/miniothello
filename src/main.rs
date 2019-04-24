@@ -1,8 +1,9 @@
-#![allow(dead_code)]
+#![warn(clippy::all)]
 
 mod board;
 mod game;
 mod human;
+#[cfg(feature = "with_random")]
 mod random;
 
 mod minimax;
@@ -12,6 +13,7 @@ use human::*;
 
 use minimax::*;
 use player::*;
+#[cfg(feature = "with_random")]
 use random::*;
 use std::env::args;
 
@@ -24,9 +26,13 @@ fn main() {
 
     let player_one: &dyn Player = match players[0].as_ref() {
         "human" => &HumanPlayer('X'),
+        #[cfg(feature = "with_random")]
         "random" => &RandomPlayer('X'),
         "minimax" => &MinimaxPlayer('X'),
         _ => {
+            #[cfg(feature = "with_random")]
+            eprintln!("Possible player types are `human`, `random`, and `minimax`");
+            #[cfg(not(feature = "with_random"))]
             eprintln!("Possible player types are `human` and `minimax`");
             std::process::exit(2);
         }
@@ -34,9 +40,13 @@ fn main() {
 
     let player_two: &dyn Player = match players[1].as_ref() {
         "human" => &HumanPlayer('O'),
+        #[cfg(feature = "with_random")]
         "random" => &RandomPlayer('O'),
         "minimax" => &MinimaxPlayer('O'),
         _ => {
+            #[cfg(feature = "with_random")]
+            eprintln!("Possible player types are `human`, `random`, and `minimax`");
+            #[cfg(not(feature = "with_random"))]
             eprintln!("Possible player types are `human` and `minimax`");
             std::process::exit(2);
         }
