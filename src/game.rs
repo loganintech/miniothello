@@ -95,7 +95,7 @@ impl<'a> Othello<'a> {
     }
 
     pub fn active_player(&self) -> ActivePlayer {
-        *&self.active_player
+        self.active_player
     }
 
     pub fn has_more_moves(&self) -> bool {
@@ -107,25 +107,37 @@ impl<'a> Othello<'a> {
         self.symbol_from_player(self.active_player)
     }
 
-    fn symbol_from_player(&self, player: ActivePlayer) -> char {
+    pub fn symbol_from_player(&self, player: ActivePlayer) -> char {
         match player {
             ActivePlayer::PlayerOne => self.p_one.get_symbol(),
             ActivePlayer::PlayerTwo => self.p_two.get_symbol(),
         }
     }
 
-    pub fn player_has_more_moves(&self, player: ActivePlayer) -> bool {
+    pub fn player_from_symbol(&self, symbol: char) -> Option<ActivePlayer> {
+        let player_one_symbol = self.p_one.get_symbol();
+        let player_two_symbol = self.p_two.get_symbol();
+        match symbol {
+            player_one_symbol => Some(ActivePlayer::PlayerOne),
+            player_two_symbol => Some(ActivePlayer::PlayerTwo),
+            _ => None,
+        }
+    }
+
+    pub fn symbol_has_more_moves(&self, symbol: char) -> bool {
         for row in 0..self.board.rows() {
             for col in 0..self.board.cols() {
-                if self.board.is_cell_empty(row, col)
-                    && self.is_legal_move(row, col, self.symbol_from_player(player))
-                {
+                if self.board.is_cell_empty(row, col) && self.is_legal_move(row, col, symbol) {
                     return true;
                 }
             }
         }
 
         false
+    }
+
+    pub fn player_has_more_moves(&self, player: ActivePlayer) -> bool {
+        self.symbol_has_more_moves(self.symbol_from_player(player))
     }
 
     pub fn is_legal_move(&self, row: usize, col: usize, symbol: char) -> bool {
@@ -190,6 +202,10 @@ impl<'a> Othello<'a> {
         }
     }
 
+    pub fn change_active_player(&mut self) {
+        self.active_player = !self.active_player;
+    }
+
     pub fn next_turn(&mut self) -> bool {
         println!("{}", self);
         println!(
@@ -223,7 +239,7 @@ impl<'a> Othello<'a> {
                 self.get_active_symbol()
             )
         }
-        self.active_player = !self.active_player;
+        self.change_active_player();
         found_valid_move
     }
 
@@ -288,5 +304,24 @@ impl<'a> fmt::Display for Othello<'a> {
             counts.get(&self.p_two.get_symbol()).unwrap_or(&0)
         );
         write!(f, "{}\n\n{}", build, self.board)
+    }
+}
+
+impl<'a> fmt::Debug for Othello<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let counts = self.board.char_counts();
+        let build = format!(
+            "\n=================\nDEBUG\n=================\nPlayer 1 ({}) score: {}\nPlayer 2 ({}) score: {}\nPlayer {}'s Turn",
+            self.p_one.get_symbol(),
+            counts.get(&self.p_one.get_symbol()).unwrap_or(&0),
+            self.p_two.get_symbol(),
+            counts.get(&self.p_two.get_symbol()).unwrap_or(&0),
+            match self.active_player { ActivePlayer::PlayerOne => 1, ActivePlayer::PlayerTwo => 2 }
+        );
+        write!(
+            f,
+            "{}\n\n{}\n=================\nEND DEBUG\n=================",
+            build, self.board
+        )
     }
 }

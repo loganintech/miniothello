@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt::{self, Write};
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Board {
     rows: usize,
     cols: usize,
