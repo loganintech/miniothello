@@ -5,8 +5,8 @@ pub struct MinimaxPlayer(pub char);
 
 impl MinimaxPlayer {
     fn minimax(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), usize) {
-        let player_char = self.get_symbol();
-        let other_char = game.symbol_from_player(
+        let player_symbol = self.get_symbol();
+        let opponent_symbol = game.symbol_from_player(
             !game
                 .player_from_symbol(self.get_symbol())
                 .expect("Tried to match symbol for someone not in the game."),
@@ -14,8 +14,8 @@ impl MinimaxPlayer {
 
         if !game.has_more_moves() {
             let counts = game.board().char_counts();
-            let our_count = counts.get(&player_char).unwrap_or(&0);
-            let opponent_count = counts.get(&other_char).unwrap_or(&0);
+            let our_count = counts.get(&player_symbol).unwrap_or(&0);
+            let opponent_count = counts.get(&opponent_symbol).unwrap_or(&0);
 
             return if our_count >= opponent_count {
                 ((0, 0), our_count - opponent_count) // Don't punish quick victories (7 - 0 is better than 25 - 23)
@@ -24,7 +24,11 @@ impl MinimaxPlayer {
             };
         }
 
-        let symbol = if maximize { player_char } else { other_char };
+        let symbol = if maximize {
+            player_symbol
+        } else {
+            opponent_symbol
+        };
         if !game.symbol_has_more_moves(symbol) {
             return self.minimax(game, !maximize);
         }
