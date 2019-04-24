@@ -127,7 +127,7 @@ impl<'a> Othello<'a> {
     pub fn symbol_has_more_moves(&self, symbol: char) -> bool {
         for row in 0..self.board.rows() {
             for col in 0..self.board.cols() {
-                if self.board.is_cell_empty(row, col) && self.is_legal_move(row, col, symbol) {
+                if self.is_legal_move(row, col, symbol) {
                     return true;
                 }
             }
@@ -218,12 +218,15 @@ impl<'a> Othello<'a> {
         );
 
         let mut found_valid_move = false;
-        while !found_valid_move && self.player_has_more_moves(self.active_player()) && self.has_more_moves() {
+        while !found_valid_move
+            && self.player_has_more_moves(self.active_player())
+            && self.has_more_moves()
+        {
             let (row, col) = self.get_move();
             if !self.is_legal_move(row, col, self.get_active_symbol()) {
                 println!("Invalid move.");
                 println!("Tried to place at {} {}", row, col);
-                println!("{}", self.board());
+                println!("{:?}", self);
             } else {
                 println!("[Selected] Row: {}, Col: {}", row, col);
                 self.play_move(row, col, self.get_active_symbol());
@@ -293,6 +296,19 @@ impl<'a> Othello<'a> {
             Some("It's a tie!".to_string())
         }
     }
+
+    pub fn get_winner_number(&self) -> usize {
+        let char_map = self.board.char_counts();
+        let p_one_count = char_map.get(&self.p_one.get_symbol()).unwrap_or(&0);
+        let p_two_count = char_map.get(&self.p_two.get_symbol()).unwrap_or(&0);
+        if p_one_count > p_two_count {
+            1
+        } else if p_two_count > p_one_count {
+            2
+        } else {
+            0
+        }
+    }
 }
 
 impl<'a> fmt::Display for Othello<'a> {
@@ -311,19 +327,6 @@ impl<'a> fmt::Display for Othello<'a> {
 
 impl<'a> fmt::Debug for Othello<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let counts = self.board.char_counts();
-        let build = format!(
-            "\n=================\nDEBUG\n=================\nPlayer 1 ({}) score: {}\nPlayer 2 ({}) score: {}\nPlayer {}'s Turn",
-            self.p_one.get_symbol(),
-            counts.get(&self.p_one.get_symbol()).unwrap_or(&0),
-            self.p_two.get_symbol(),
-            counts.get(&self.p_two.get_symbol()).unwrap_or(&0),
-            match self.active_player { ActivePlayer::PlayerOne => 1, ActivePlayer::PlayerTwo => 2 }
-        );
-        write!(
-            f,
-            "{}\n\n{}\n=================\nEND DEBUG\n=================",
-            build, self.board
-        )
+        write!(f, "\n=================\nDEBUG\n=================\nPlayer {}'s Turn\n{}\n=================\nEND DEBUG\n=================", self.get_winner_number(), self)
     }
 }
