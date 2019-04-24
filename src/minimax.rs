@@ -31,21 +31,15 @@ impl MinimaxPlayer {
 
         let mut best_res = if maximize { 0 } else { std::usize::MAX };
         let mut best_coords = (game.board().rows(), game.board().cols());
-        for row in 0..game.board().rows() {
-            for col in 0..game.board().cols() {
-                if game.is_legal_move(row, col, symbol) {
-                    let mut new_game: Othello = game.clone();
-                    new_game.play_move(row, col, symbol);
-                    let result = self.minimax(&mut new_game, !maximize).1;
-                    if (maximize && result >= best_res) || (!maximize && result <= best_res) {
-                        best_res = result;
-                        best_coords = (row, col);
-                    }
-                }
+
+        for (row, col) in game.successors(symbol) {
+            let mut new_game: Othello = game.clone();
+            new_game.play_move(row, col, symbol);
+            let result = self.minimax(&mut new_game, !maximize).1;
+            if (maximize && result >= best_res) || (!maximize && result <= best_res) {
+                best_res = result;
+                best_coords = (row, col);
             }
-        }
-        if best_coords == (game.board().rows(), game.board().cols()) {
-            eprintln!("Returning Bad Values: (best, best) == (board.rows, board.cols)");
         }
         (best_coords, best_res)
     }
@@ -57,6 +51,7 @@ impl Player for MinimaxPlayer {
     }
 
     fn get_move(&self, game: &Othello) -> (usize, usize) {
+        // let game = dbg!(game);
         self.minimax(&mut game.clone(), true).0
     }
 }
