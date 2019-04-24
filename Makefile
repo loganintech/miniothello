@@ -8,4 +8,4 @@ with_random: clean
 	@mv target/release/othello .
 
 clean:
-	@rm othello
+	@rm -f othello

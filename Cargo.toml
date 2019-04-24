@@ -5,11 +5,11 @@ authors = ["Logan Saso <logansaso+tech@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-rand = "0.6.5"
+rand = {version = "0.6.5", optional = true}
 
 [features]
 default = []
-with_random = []
+with_random = ["rand"]
 
 [[bin]]
 name = "othello"
