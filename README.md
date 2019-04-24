@@ -19,6 +19,12 @@ Player 1 (X) move:
 Enter row: 3
 Enter col: 0
 Invalid move.
+Enter row: ?
+Moves:
+Row: 0, Col: 2
+Row: 1, Col: 3
+Row: 2, Col: 0
+Row: 3, Col: 1
 Enter row: 1
 Enter col: 3
 [Selected] Row: 1, Col: 3

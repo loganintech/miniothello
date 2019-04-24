@@ -168,28 +168,13 @@ impl<'a> Othello<'a> {
             return false;
         }
 
-        if match_symbol {
-            match self.board.get_cell(row, col) {
-                Some(symbol) if symbol == self.get_active_symbol() => true,
-                _ => {
-                    if let Some((new_row, new_col)) = direction.new_coords_from_direction(row, col)
-                    {
-                        self.check_endpoint(new_row, new_col, symbol, direction, match_symbol)
-                    } else {
-                        false
-                    }
-                }
-            }
-        } else {
-            match self.board.get_cell(row, col) {
-                Some(symbol) if symbol == self.get_active_symbol() => false,
-                _ => {
-                    if let Some((new_row, new_col)) = direction.new_coords_from_direction(row, col)
-                    {
-                        self.check_endpoint(new_row, new_col, symbol, direction, !match_symbol)
-                    } else {
-                        false
-                    }
+        match self.board.get_cell(row, col) {
+            Some(symbol) if symbol == self.get_active_symbol() => match_symbol,
+            _ => {
+                if let Some((new_row, new_col)) = direction.new_coords_from_direction(row, col) {
+                    self.check_endpoint(new_row, new_col, symbol, direction, true)
+                } else {
+                    false
                 }
             }
         }

@@ -17,6 +17,15 @@ impl Player for HumanPlayer {
             print!("Enter row: ");
             std::io::stdout().flush().unwrap();
             std::io::stdin().read_line(&mut row).unwrap();
+
+            if row.trim() == "?" {
+                println!("Moves:");
+                for (row, col) in game.successors(self.get_symbol()) {
+                    println!("Row: {}, Col: {}", row, col);
+                }
+                continue;
+            }
+
             print!("Enter col: ");
             std::io::stdout().flush().unwrap();
             std::io::stdin().read_line(&mut col).unwrap();
