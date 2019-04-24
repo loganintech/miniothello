@@ -50,7 +50,7 @@ impl Iterator for Direction {
     }
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
 pub enum ActivePlayer {
     PlayerOne,
     PlayerTwo,
@@ -307,6 +307,18 @@ impl<'a> Othello<'a> {
             0
         }
     }
+
+    pub fn successors(&self, symbol: char) -> Vec<(usize, usize)> {
+        let mut successors = vec![];
+        for row in 0..self.board().rows() {
+            for col in 0..self.board().cols() {
+                if self.is_legal_move(row, col, symbol) {
+                    successors.push((row, col));
+                }
+            }
+        }
+        successors
+    }
 }
 
 impl<'a> fmt::Display for Othello<'a> {
@@ -325,6 +337,9 @@ impl<'a> fmt::Display for Othello<'a> {
 
 impl<'a> fmt::Debug for Othello<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "\n=================\nDEBUG\n=================\nPlayer {}'s Turn\n{}\n=================\nEND DEBUG\n=================", self.get_winner_number(), self)
+        write!(f,
+        "\n=================\nDEBUG\n=================\nPlayer {}'s Turn\n{}\n=================\nEND DEBUG\n=================",
+        if self.active_player() == ActivePlayer::PlayerOne { 1 } else { 2 },
+        self)
     }
 }
