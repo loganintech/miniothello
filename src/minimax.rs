@@ -13,28 +13,38 @@ impl MinimaxPlayer {
                 .expect("Tried to match symbol for someone not in the game."),
         );
 
+        //If there is no more game to play
         if !game.has_more_moves() {
             let counts = game.board().char_counts();
             let our_count = counts.get(&player_symbol).unwrap_or(&0);
             let opponent_count = counts.get(&opponent_symbol).unwrap_or(&0);
 
-            return if our_count >= opponent_count {
+            //If we won, return how much we won by
+            return if our_count > opponent_count {
                 ((0, 0), our_count - opponent_count) // Don't punish quick victories (7 - 0 is better than 25 - 23)
             } else {
                 ((0, 0), 0)
             };
         }
 
+        // Maximize ourselves, minimize opponents
         let symbol = if maximize {
             player_symbol
         } else {
             opponent_symbol
         };
+
+        //If we're at this point the game isn't over but we can't move so let's let our opponent move.
         if !game.symbol_has_more_moves(symbol) {
             return self.minimax(game, !maximize);
         }
 
-        let mut best_res = if maximize { 0 } else { std::usize::MAX };
+        //If we're maximizing, we increase from 0, otherwise we decrease from usize::MAX
+        let mut best_res = if maximize {
+            std::usize::MIN
+        } else {
+            std::usize::MAX
+        };
         let mut best_coords = (game.board().rows(), game.board().cols());
 
         for (row, col) in game.successors(symbol) {
@@ -46,6 +56,7 @@ impl MinimaxPlayer {
                 best_coords = (row, col);
             }
         }
+
         (best_coords, best_res)
     }
 }
