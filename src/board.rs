@@ -43,20 +43,6 @@ impl Board {
         row < self.rows && col < self.cols
     }
 
-    pub fn is_full(&self) -> bool {
-        self.grid.iter().all(|row| row.iter().all(Option::is_some))
-    }
-
-    pub fn empty_spaces(&self) -> usize {
-        let mut max = self.rows() * self.cols();
-        let counts = self.char_counts();
-        for (_, count) in counts {
-            max -= count;
-        }
-
-        max
-    }
-
     pub fn char_counts(&self) -> HashMap<char, usize> {
         let mut map = HashMap::new();
         self.grid.iter().for_each(|row| {
@@ -66,15 +52,6 @@ impl Board {
         });
 
         map
-    }
-
-    pub fn get_char_count(&self, symbol: &char) -> Option<usize> {
-        let char_map = self.char_counts();
-        if let Some(count) = char_map.get(symbol) {
-            Some(*count)
-        } else {
-            None
-        }
     }
 }
 
