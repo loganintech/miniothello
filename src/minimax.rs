@@ -7,6 +7,7 @@ impl MinimaxPlayer {
     fn minimax(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), usize) {
         let player_symbol = self.get_symbol();
         let opponent_symbol = game.symbol_from_player(
+            //The ! changes an ActivePlayer::PlayerOne into ActivePlayer::PlayerTwo and vice-versa
             !game
                 .player_from_symbol(self.get_symbol())
                 .expect("Tried to match symbol for someone not in the game."),
