@@ -6,3 +6,11 @@ edition = "2018"
 
 [dependencies]
 rand = "0.6.5"
+
+[features]
+default = []
+with_random = []
+
+[[bin]]
+name = "othello"
+path = "src/main.rs"
