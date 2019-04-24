@@ -3,14 +3,16 @@
 mod board;
 mod game;
 mod human;
+mod random;
 
 mod minimax;
 mod player;
 use game::Othello;
 use human::*;
+
 use minimax::*;
 use player::*;
-
+use random::*;
 use std::env::args;
 
 fn main() {
@@ -22,6 +24,7 @@ fn main() {
 
     let player_one: &dyn Player = match players[0].as_ref() {
         "human" => &HumanPlayer('X'),
+        "random" => &RandomPlayer('X'),
         "minimax" => &MinimaxPlayer('X'),
         _ => {
             eprintln!("Possible player types are `human` and `minimax`");
@@ -31,6 +34,7 @@ fn main() {
 
     let player_two: &dyn Player = match players[1].as_ref() {
         "human" => &HumanPlayer('O'),
+        "random" => &RandomPlayer('O'),
         "minimax" => &MinimaxPlayer('O'),
         _ => {
             eprintln!("Possible player types are `human` and `minimax`");
@@ -38,7 +42,7 @@ fn main() {
         }
     };
 
-    let mut game = Othello::with_players(player_one, player_two, 4, 4);
+    let mut game = Othello::with_players(player_one, player_two, 10, 10);
     while game.has_more_moves() {
         let p1_success = game.next_turn();
         let p2_success = game.next_turn();
