@@ -16,7 +16,7 @@ use random::*;
 use std::env::args;
 
 fn main() {
-    let players = args().skip(1).take(2).collect::<Vec<_>>();
+    let players = args().skip(1).take(4).collect::<Vec<_>>();
     if players.len() < 2 {
         eprintln!("Usage: miniothello <player type> <player type>");
         std::process::exit(1);
@@ -42,10 +42,23 @@ fn main() {
         }
     };
 
-    let mut game = Othello::with_players(player_one, player_two, 4, 4);
+    let mut game = Othello::with_players(
+        player_one,
+        player_two,
+        players
+            .get(2)
+            .and_then(|x| x.parse::<usize>().ok())
+            .unwrap_or(4),
+        players
+            .get(3)
+            .and_then(|x| x.parse::<usize>().ok())
+            .unwrap_or(4),
+    );
     while game.has_more_moves() {
         let p1_success = game.next_turn();
-        if !game.has_more_moves() { break; }
+        if !game.has_more_moves() {
+            break;
+        }
         let p2_success = game.next_turn();
 
         if !p1_success && !p2_success {
@@ -61,4 +74,9 @@ fn main() {
         }),
         game
     );
+
+    std::process::exit(match game.get_winner_number() {
+        x @ 1..=2 => x as i32,
+        _ => 0,
+    });
 }
