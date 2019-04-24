@@ -118,8 +118,8 @@ impl<'a> Othello<'a> {
         let player_one_symbol = self.p_one.get_symbol();
         let player_two_symbol = self.p_two.get_symbol();
         match symbol {
-            player_one_symbol => Some(ActivePlayer::PlayerOne),
-            player_two_symbol => Some(ActivePlayer::PlayerTwo),
+            symbol if symbol == player_one_symbol => Some(ActivePlayer::PlayerOne),
+            symbol if symbol == player_two_symbol => Some(ActivePlayer::PlayerTwo),
             _ => None,
         }
     }
