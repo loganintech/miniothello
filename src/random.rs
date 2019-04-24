@@ -15,7 +15,9 @@ impl Player for RandomPlayer {
             let row = rng.gen::<usize>() % game.board().rows();
             let col = rng.gen::<usize>() % game.board().cols();
 
-            if !game.is_legal_move(row, col, self.get_symbol()) { continue; }
+            if !game.is_legal_move(row, col, self.get_symbol()) {
+                continue;
+            }
             return (row, col);
         }
     }

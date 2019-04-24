@@ -4,52 +4,72 @@ use crate::player::Player;
 pub struct MinimaxPlayer(pub char);
 
 impl MinimaxPlayer {
-    fn move_helper(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), usize) {
-        let symbol = if maximize {
-            self.get_symbol()
-        } else {
-            game.symbol_from_player(
-                !game
-                    .player_from_symbol(self.get_symbol())
-                    .expect("Tried to match symbol for someone not in the game."),
-            )
-        };
+    fn minimax(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), usize) {
+        // let game = dbg!(game);
+
+        let player_char = self.get_symbol();
+        let other_char = game.symbol_from_player(
+            !game
+                .player_from_symbol(self.get_symbol())
+                .expect("Tried to match symbol for someone not in the game."),
+        );
+
+        let symbol = if maximize { player_char } else { other_char };
 
         if !game.has_more_moves() {
-            return ((0, 0), 0);
+            let counts = game.board().char_counts();
+            let our_count = counts.get(&player_char).unwrap_or(&0);
+            let opponent_count = counts.get(&other_char).unwrap_or(&0);
+
+            return dbg!(if our_count > opponent_count {
+                ((0, 0), *our_count)
+            } else {
+                ((0, 0), 0)
+            });
         }
 
         if game.has_more_moves() && !game.symbol_has_more_moves(symbol) {
-            game.change_active_player();
-            return self.move_helper(game, !maximize);
-        }
-
-        let mut possibilities: Vec<((usize, usize), usize, Othello)> = vec![];
-
-        for row in 0..game.board().rows() {
-            for col in 0..game.board().cols() {
-                if game.is_legal_move(row, col, symbol) && game.board().is_cell_empty(row, col) {
-                    let mut new_board: Othello = game.clone();
-                    new_board.play_move(row, col, symbol);
-                    new_board.change_active_player();
-                    let score = new_board
-                        .board()
-                        .get_char_count(&self.get_symbol())
-                        .expect("Tried to get the score of a player that isn't playing.");
-                    possibilities.push(((row, col), score, new_board));
-                }
-            }
+            return dbg!(self.minimax(game, !maximize));
         }
 
         if maximize {
-            let mut max = possibilities.into_iter().max_by_key(|x| x.1).unwrap();
-            let res = self.move_helper(&mut max.2, false);
-            (max.0, max.1 + res.1)
+            let mut best_res = 0;
+            let mut best_coords = (0, 0);
+            for row in 0..game.board().rows() {
+                for col in 0..game.board().cols() {
+                    if game.is_legal_move(row, col, symbol) && game.board().is_cell_empty(row, col)
+                    {
+                        let mut new_game: Othello = game.clone();
+                        new_game.play_move(row, col, symbol);
+                        let result = dbg!(self.minimax(&mut new_game, false)).1;
+                        if result > best_res {
+                            best_res = result;
+                            best_coords = (row, col);
+                        }
+                    }
+                }
+            }
+
+            (best_coords, best_res)
         } else {
-            let mut min = possibilities.into_iter().min_by_key(|x| x.1).unwrap();
-            let res = self.move_helper(&mut min.2, true);
-            min.1 += res.1;
-            (min.0, min.1 + res.1)
+            let mut best_res = std::usize::MAX;
+            let mut best_coords = (0, 0);
+            for row in 0..game.board().rows() {
+                for col in 0..game.board().cols() {
+                    if game.is_legal_move(row, col, symbol) && game.board().is_cell_empty(row, col)
+                    {
+                        let mut new_game: Othello = game.clone();
+                        new_game.play_move(row, col, symbol);
+                        let result = dbg!(self.minimax(&mut new_game, true)).1;
+                        if result < best_res {
+                            best_res = result;
+                            best_coords = (row, col);
+                        }
+                    }
+                }
+            }
+
+            (best_coords, best_res)
         }
     }
 }
@@ -60,6 +80,6 @@ impl Player for MinimaxPlayer {
     }
 
     fn get_move(&self, game: &Othello) -> (usize, usize) {
-        self.move_helper(&mut game.clone(), true).0
+        dbg!(self.minimax(&mut game.clone(), true)).0
     }
 }

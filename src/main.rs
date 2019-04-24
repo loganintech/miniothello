@@ -42,9 +42,10 @@ fn main() {
         }
     };
 
-    let mut game = Othello::with_players(player_one, player_two, 10, 10);
+    let mut game = Othello::with_players(player_one, player_two, 4, 4);
     while game.has_more_moves() {
         let p1_success = game.next_turn();
+        if !game.has_more_moves() { break; }
         let p2_success = game.next_turn();
 
         if !p1_success && !p2_success {

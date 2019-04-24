@@ -218,10 +218,12 @@ impl<'a> Othello<'a> {
         );
 
         let mut found_valid_move = false;
-        while !found_valid_move && self.player_has_more_moves(self.active_player()) {
+        while !found_valid_move && self.player_has_more_moves(self.active_player()) && self.has_more_moves() {
             let (row, col) = self.get_move();
             if !self.is_legal_move(row, col, self.get_active_symbol()) {
                 println!("Invalid move.");
+                println!("Tried to place at {} {}", row, col);
+                println!("{}", self.board());
             } else {
                 println!("[Selected] Row: {}, Col: {}", row, col);
                 self.play_move(row, col, self.get_active_symbol());
