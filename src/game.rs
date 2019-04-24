@@ -225,8 +225,6 @@ impl<'a> Othello<'a> {
             let (row, col) = self.get_move();
             if !self.is_legal_move(row, col, self.get_active_symbol()) {
                 println!("Invalid move.");
-                println!("Tried to place at {} {}", row, col);
-                println!("{:?}", self);
             } else {
                 println!("[Selected] Row: {}, Col: {}", row, col);
                 self.play_move(row, col, self.get_active_symbol());
