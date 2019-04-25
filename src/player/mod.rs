@@ -1,4 +1,5 @@
 use crate::Othello;
+
 pub mod human;
 pub mod minimax;
 #[cfg(feature = "with_random")]

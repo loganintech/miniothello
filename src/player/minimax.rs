@@ -1,9 +1,13 @@
 use crate::player::Player;
 use crate::Othello;
 
+/// Container struct that allows us to implement a minimax algorithm player.
 pub struct MinimaxPlayer(pub char);
 
 impl MinimaxPlayer {
+    /// # An implementation of the minimax recursive algorithm for finding scores.
+    ///
+    /// Read more about it on wikipedia: https://en.wikipedia.org/wiki/Computer_Othello#Search_techniques
     fn minimax(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), isize) {
         let player_symbol = self.get_symbol();
         let opponent_symbol = game.symbol_from_player(
