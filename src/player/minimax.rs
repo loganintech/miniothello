@@ -1,7 +1,15 @@
+//! A container module for the minimax player
+
+
 use crate::player::Player;
 use crate::Othello;
 
-/// Container struct that allows us to implement a minimax algorithm player.
+/// A player that makes moves based on a simple minimax algorithm (w/o alpha-beta pruning) by recursivly playing the game.
+///
+/// On a 4x4 space, this player cannot lose if playing as player 2.
+///
+/// _Note_: This algorithm has a very large time complexity. 6x6 can generate one move on a scale of days or weeks depending on your computer.
+/// However, a 4x4 grid can be done in a matter of seconds or subseconds.
 pub struct MinimaxPlayer(pub char);
 
 impl MinimaxPlayer {

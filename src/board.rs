@@ -1,3 +1,8 @@
+//! Contains the game board. This does _not_ include logic about how a game is played.
+//!
+//! The board has no notions of players or even specific restrictions on count.
+//! It only keeps an NxM grid of `Option<char>`s. This entire API is safe.
+
 use std::collections::HashMap;
 use std::fmt::{self, Write};
 

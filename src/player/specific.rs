@@ -1,8 +1,13 @@
+//! A container module for the specific player
+
+
 use crate::player::Player;
 use crate::Othello;
 use std::cell::RefCell;
 use std::collections::VecDeque;
 
+/// A player used for testing that picks specific moves in a specific order.
+/// This player is not useful for anything but testing and isn't compiled if we aren't in test mode.
 pub struct SpecificPlayer {
     symbol: char,
     moves: RefCell<VecDeque<(usize, usize)>>,
@@ -22,6 +27,7 @@ impl Player for SpecificPlayer {
         self.symbol
     }
 
+    /// Returns the front of the move vector.
     fn get_move(&self, _: &Othello) -> (usize, usize) {
         self.moves
             .borrow_mut()

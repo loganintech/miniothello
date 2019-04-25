@@ -1,10 +1,14 @@
+//! A container module for the human player
+
 use crate::player::Player;
 use crate::Othello;
 use std::io::prelude::*;
 
+/// Adds a human player that prompts stdin for moves.
 pub struct HumanPlayer(pub char);
 
 impl HumanPlayer {
+    /// Move helper prints the prompt, checking for ? and prevents choosing an invalid move.
     fn move_helper(
         &self,
         prompt: &'static str,
@@ -65,6 +69,7 @@ impl Player for HumanPlayer {
         self.0
     }
 
+    /// Prompts a human via stdin for moves.
     fn get_move(&self, game: &Othello) -> (usize, usize) {
         let board = game.board();
         let mut row = None;
