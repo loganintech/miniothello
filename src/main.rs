@@ -62,9 +62,4 @@ fn main() {
         }),
         game
     );
-
-    std::process::exit(match game.get_winner_number() {
-        x @ 1..=2 => x as i32,
-        _ => 0,
-    });
 }
