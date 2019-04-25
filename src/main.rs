@@ -24,7 +24,7 @@ fn main() {
             eprintln!("Possible player types are `human`, `random`, and `minimax`");
             #[cfg(not(feature = "with_random"))]
             eprintln!("Possible player types are `human` and `minimax`");
-            std::process::exit(2);
+            std::process::exit(3);
         }
     };
 
@@ -38,7 +38,7 @@ fn main() {
             eprintln!("Possible player types are `human`, `random`, and `minimax`");
             #[cfg(not(feature = "with_random"))]
             eprintln!("Possible player types are `human` and `minimax`");
-            std::process::exit(2);
+            std::process::exit(3);
         }
     };
 

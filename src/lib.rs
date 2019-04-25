@@ -128,15 +128,8 @@ impl<'a> Othello<'a> {
     }
 
     pub fn symbol_has_more_moves(&self, symbol: char) -> bool {
-        for row in 0..self.board.rows() {
-            for col in 0..self.board.cols() {
-                if self.is_legal_move(row, col, symbol) {
-                    return true;
-                }
-            }
-        }
-
-        false
+        (0..self.board.rows())
+            .any(|row| (0..self.board.cols()).any(|col| self.is_legal_move(row, col, symbol)))
     }
 
     pub fn player_has_more_moves(&self, player: ActivePlayer) -> bool {
@@ -148,15 +141,13 @@ impl<'a> Othello<'a> {
             return false;
         }
 
-        for direction in Direction::N.take(8) {
+        (Direction::N.take(8)).any(|direction| {
             if let Some((new_row, new_col)) = direction.new_coords_from_direction(row, col) {
-                if self.check_endpoint(new_row, new_col, symbol, direction, false) {
-                    return true;
-                }
+                self.check_endpoint(new_row, new_col, symbol, direction, false)
+            } else {
+                false
             }
-        }
-
-        false
+        })
     }
 
     pub fn check_endpoint(
@@ -194,16 +185,18 @@ impl<'a> Othello<'a> {
         self.active_player = !self.active_player;
     }
 
+    pub fn active_as_num(&self) -> usize {
+        match self.active_player() {
+            ActivePlayer::PlayerOne => 1,
+            ActivePlayer::PlayerTwo => 2,
+        }
+    }
+
     pub fn next_turn(&mut self) -> bool {
+        let symbol = self.get_active_symbol();
+
         println!("{}", self);
-        println!(
-            "Player {} ({}) move:",
-            match self.active_player() {
-                ActivePlayer::PlayerOne => 1,
-                ActivePlayer::PlayerTwo => 2,
-            },
-            self.get_active_symbol()
-        );
+        println!("Player {} ({}) move:", self.active_as_num(), symbol);
 
         let mut found_valid_move = false;
         while !found_valid_move
@@ -211,23 +204,20 @@ impl<'a> Othello<'a> {
             && self.has_more_moves()
         {
             let (row, col) = self.get_move();
-            if !self.is_legal_move(row, col, self.get_active_symbol()) {
+            if !self.is_legal_move(row, col, symbol) {
                 println!("Invalid move.");
-            } else {
-                println!("[Selected] Row: {}, Col: {}", row, col);
-                self.play_move(row, col, self.get_active_symbol());
-                found_valid_move = true;
+                continue;
             }
+            println!("[Selected] Row: {}, Col: {}", row, col);
+            self.play_move(row, col, symbol);
+            found_valid_move = true;
         }
 
         if !found_valid_move {
             println!(
                 "Couldn't find valid move for Player {} ({})",
-                match self.active_player() {
-                    ActivePlayer::PlayerOne => 1,
-                    ActivePlayer::PlayerTwo => 2,
-                },
-                self.get_active_symbol()
+                self.active_as_num(),
+                symbol
             )
         }
         found_valid_move
@@ -309,22 +299,18 @@ impl<'a> Othello<'a> {
     }
 
     pub fn run(&mut self) -> usize {
-        let mut iter_count = if self.active_player() == ActivePlayer::PlayerOne {
-            0
-        } else {
-            1
-        };
-        let mut results = [true, true];
+        let mut iter_count = self.active_as_num() - 1;
+        let mut played_successfully = [true, true];
         while self.has_more_moves() {
-            results[iter_count] = self.next_turn();
-            if !results[0] && !results[1] {
+            played_successfully[iter_count] = self.next_turn();
+            if !played_successfully[0] && !played_successfully[1] {
                 break;
             }
 
             // If we're on the second iteration and they aren't both true, reset them
             if iter_count == 1 {
-                results[0] = true;
-                results[1] = true;
+                played_successfully[0] = true;
+                played_successfully[1] = true;
             }
             iter_count = (iter_count + 1) % 2;
         }
@@ -358,15 +344,16 @@ impl<'a> fmt::Debug for Othello<'a> {
 
 #[cfg(test)]
 mod test {
-    use super::{player::*, *};
+    use super::player::*;
+    use super::Othello;
 
     #[cfg(feature = "with_random")]
     #[test]
-    fn try_1000_results() {
-        let iterations = 1000;
+    fn try_random() {
+        let iterations = 100;
         for i in 0..iterations {
             println!("Running Game: {} {} left", i, iterations - i);
-            let mut game: super::Othello = super::Othello::with_players(
+            let mut game = Othello::with_players(
                 &random::RandomPlayer('X'),
                 &minimax::MinimaxPlayer('O'),
                 4,
@@ -377,24 +364,19 @@ mod test {
         }
     }
 
-    // #[test]
-    // fn specific_minimax() {
-    //     let mut board = vec![
-    //         vec![Some('X'), None, None, None],
-    //         vec![Some('X'), Some('X'), Some('X'), None],
-    //         vec![Some('X'), Some('O'), Some('X'), Some('X')],
-    //         vec![None, Some('O'), Some('O'), Some('O')],
-    //     ];
-    //     board.reverse(); //It has to be reversed for order to be correct.
-    //     let mut game: Othello = Othello {
-    //         p_one: &specific::SpecificPlayer::new('X', &[(3, 2), (0, 0)]),
-    //         p_two: &minimax::MinimaxPlayer('O'),
-    //         active_player: ActivePlayer::PlayerTwo,
-    //         board: Board::with_state(4, 4, board),
-    //     };
-
-    //     let res = game.run();
-    //     dbg!(game);
-    //     assert_ne!(1, res);
-    // }
+    #[test]
+    fn try_minimax() {
+        let iterations = 100;
+        for i in 0..iterations {
+            println!("Running Game: {} {} left", i, iterations - i);
+            let mut game = Othello::with_players(
+                &minimax::MinimaxPlayer('X'),
+                &minimax::MinimaxPlayer('O'),
+                4,
+                4,
+            );
+            game.run();
+            assert_ne!(1, game.get_winner_number());
+        }
+    }
 }
