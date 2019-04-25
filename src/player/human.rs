@@ -10,6 +10,7 @@ impl HumanPlayer {
         prompt: &'static str,
         upper_bound: usize,
         game: &Othello,
+        row_choice: &mut Option<usize>,
     ) -> Option<usize> {
         let mut val = "".to_string();
 
@@ -18,12 +19,29 @@ impl HumanPlayer {
         std::io::stdin().read_line(&mut val).unwrap();
         let val = val.trim();
 
-        if val == "?" {
-            println!("Moves:");
-            for (row, col) in game.successors(self.get_symbol()) {
-                println!("Row: {}, Col: {}", row, col);
+        match (val, &row_choice) {
+            ("?", Some(x)) => {
+                let mut printed = false;
+                for (row, col) in game.successors(self.get_symbol()) {
+                    if row != *x {
+                        continue;
+                    }
+                    printed = true;
+                    println!("Row: {}, Col: {}", row, col);
+                }
+                if !printed {
+                    println!("No valid moves found. Resetting to row.");
+                    row_choice.take();
+                }
+                return None;
             }
-            return None;
+            ("?", None) => {
+                for (row, col) in game.successors(self.get_symbol()) {
+                    println!("Row: {}, Col: {}", row, col);
+                }
+                return None;
+            }
+            _ => {}
         }
 
         match val.parse::<usize>() {
@@ -54,13 +72,13 @@ impl Player for HumanPlayer {
 
         loop {
             if row.is_none() {
-                row = self.move_helper("Enter row (or ?): ", board.rows(), game);
+                row = self.move_helper("Enter row (or ?): ", board.rows(), game, &mut row);
                 if row.is_none() {
                     continue;
                 }
             }
             if col.is_none() {
-                col = self.move_helper("Enter col (or ?): ", board.cols(), game);
+                col = self.move_helper("Enter col (or ?): ", board.cols(), game, &mut row);
                 if col.is_none() {
                     continue;
                 }
