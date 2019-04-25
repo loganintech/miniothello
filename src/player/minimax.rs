@@ -43,6 +43,7 @@ impl MinimaxPlayer {
                 best_coords = (row, col);
             }
         }
+
         (best_coords, best_res)
     }
 }

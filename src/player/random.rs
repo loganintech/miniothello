@@ -1,5 +1,5 @@
-use crate::Othello;
 use crate::player::Player;
+use crate::Othello;
 use rand::{thread_rng, Rng};
 
 pub struct RandomPlayer(pub char);

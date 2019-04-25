@@ -23,6 +23,9 @@ impl Player for SpecificPlayer {
     }
 
     fn get_move(&self, _: &Othello) -> (usize, usize) {
-        self.moves.borrow_mut().pop_front().unwrap()
+        self.moves
+            .borrow_mut()
+            .pop_front()
+            .expect("The SpecificPlayer configuration is invalid.")
     }
 }
