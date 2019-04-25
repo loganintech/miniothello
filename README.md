@@ -16,31 +16,41 @@ Player 2 (O) score: 2
     0 1 2 3
 
 Player 1 (X) move:
-Enter row: 3
-Enter col: 0
-Invalid move.
-Enter row: ?
+Enter row (or ?): 3
+Enter col (or ?): ?
 Moves:
 Row: 0, Col: 2
 Row: 1, Col: 3
 Row: 2, Col: 0
 Row: 3, Col: 1
-Enter row: 1
-Enter col: 3
-[Selected] Row: 1, Col: 3
+Enter col (or ?): 1
+[Selected] Row: 3, Col: 1
 
 Player 1 (X) score: 4
 Player 2 (O) score: 1
 
-3:| . . . .
-2:| . O X .
-1:| . X X X
+3:| . X . .
+2:| . X X .
+1:| . X O .
 0:| . . . .
    ---------
     0 1 2 3
 
 Player 2 (O) move:
-[Selected] Row: 0, Col: 3
+[Selected] Row: 3, Col: 0
+
+Player 1 (X) score: 3
+Player 2 (O) score: 3
+
+3:| O X . .
+2:| . O X .
+1:| . X O .
+0:| . . . .
+   ---------
+    0 1 2 3
+
+Player 1 (X) move:
+Enter row (or ?):
 ```
 
 ## Compiling
