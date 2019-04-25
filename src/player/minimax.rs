@@ -44,7 +44,7 @@ impl MinimaxPlayer {
             return self.minimax(game, !maximize);
         }
 
-        let mut best_coords = (game.board().rows(), game.board().cols());
+        let mut best_coords = (0, 0);
 
         for (row, col) in game.successors(turn_symbol) {
             let mut new_game: Othello = game.clone();
