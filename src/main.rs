@@ -1,30 +1,22 @@
 #![warn(clippy::all)]
 
-mod board;
-mod game;
-mod human;
 #[cfg(feature = "with_random")]
-mod random;
+use othlib::random::*;
 
-mod minimax;
-mod player;
-use game::Othello;
-use human::*;
+use othlib::human::*;
+use othlib::minimax::*;
+use othlib::player::*;
 
-use minimax::*;
-use player::*;
-#[cfg(feature = "with_random")]
-use random::*;
 use std::env::args;
 
 fn main() {
-    let players = args().skip(1).take(4).collect::<Vec<_>>();
-    if players.len() < 2 {
+    let args = args().skip(1).take(4).collect::<Vec<_>>();
+    if args.len() < 2 {
         eprintln!("Usage: miniothello <player type> <player type>");
         std::process::exit(1);
     }
 
-    let player_one: &dyn Player = match players[0].as_ref() {
+    let player_one: &dyn Player = match args[0].as_ref() {
         "human" => &HumanPlayer('X'),
         #[cfg(feature = "with_random")]
         "random" => &RandomPlayer('X'),
@@ -38,7 +30,7 @@ fn main() {
         }
     };
 
-    let player_two: &dyn Player = match players[1].as_ref() {
+    let player_two: &dyn Player = match args[1].as_ref() {
         "human" => &HumanPlayer('O'),
         #[cfg(feature = "with_random")]
         "random" => &RandomPlayer('O'),
@@ -52,30 +44,18 @@ fn main() {
         }
     };
 
-    let mut game = Othello::with_players(
+    let mut game = othlib::Othello::with_players(
         player_one,
         player_two,
-        players
-            .get(2)
+        args.get(2)
             .and_then(|x| x.parse::<usize>().ok())
             .unwrap_or(4),
-        players
-            .get(3)
+        args.get(3)
             .and_then(|x| x.parse::<usize>().ok())
             .unwrap_or(4),
     );
-    while game.has_more_moves() {
-        let p1_success = game.next_turn();
-        if !game.has_more_moves() {
-            break;
-        }
-        let p2_success = game.next_turn();
 
-        if !p1_success && !p2_success {
-            eprintln!("Both players failed to play");
-            break;
-        }
-    }
+    game.run();
 
     println!(
         "\n================================\n{}\n================================\n\nBoard: \n{}",

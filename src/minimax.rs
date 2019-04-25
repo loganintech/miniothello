@@ -1,5 +1,5 @@
-use crate::game::Othello;
 use crate::player::Player;
+use crate::Othello;
 
 pub struct MinimaxPlayer(pub char);
 
@@ -34,16 +34,16 @@ impl MinimaxPlayer {
             let our_count = *counts.get(&player_symbol).unwrap_or(&0) as isize;
             let opponent_count = *counts.get(&opponent_symbol).unwrap_or(&0) as isize;
             let (next_row, next_col) = **successors.peek().unwrap_or(&&(0, 0));
-            // println!(
-            //     "({}, {}) [{}] {} - [{}] {} = {}",
-            //     next_row,
-            //     next_col,
-            //     player_symbol,
-            //     our_count,
-            //     opponent_symbol,
-            //     opponent_count,
-            //     our_count - opponent_count
-            // );
+            println!(
+                "({}, {}) [{}] {} - [{}] {} = {}",
+                next_row,
+                next_col,
+                player_symbol,
+                our_count,
+                opponent_symbol,
+                opponent_count,
+                our_count - opponent_count
+            );
             return ((next_row, next_col), our_count - opponent_count);
         }
 

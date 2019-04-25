@@ -1,4 +1,4 @@
-use crate::game::Othello;
+use crate::Othello;
 use crate::player::Player;
 use rand::{thread_rng, Rng};
 
@@ -18,6 +18,7 @@ impl Player for RandomPlayer {
             if !game.is_legal_move(row, col, self.get_symbol()) {
                 continue;
             }
+
             return (row, col);
         }
     }

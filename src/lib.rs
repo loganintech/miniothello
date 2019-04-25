@@ -1,3 +1,11 @@
+pub mod board;
+pub mod human;
+#[cfg(feature = "with_random")]
+pub mod random;
+
+pub mod minimax;
+pub mod player;
+
 use crate::board::*;
 use crate::player::Player;
 use std::fmt;
@@ -304,6 +312,21 @@ impl<'a> Othello<'a> {
         }
         successors
     }
+
+    pub fn run(&mut self) {
+        while self.has_more_moves() {
+            let p1_success = self.next_turn();
+            if !self.has_more_moves() {
+                break;
+            }
+            let p2_success = self.next_turn();
+
+            if !p1_success && !p2_success {
+                eprintln!("Both players failed to play");
+                break;
+            }
+        }
+    }
 }
 
 impl<'a> fmt::Display for Othello<'a> {
@@ -326,5 +349,24 @@ impl<'a> fmt::Debug for Othello<'a> {
         "\n=================\nDEBUG\n=================\nPlayer {}'s Turn\n{}\n=================\nEND DEBUG\n=================",
         if self.active_player() == ActivePlayer::PlayerOne { 1 } else { 2 },
         self)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[cfg(feature = "with_random")]
+    #[test]
+    fn try_1000_results() {
+        for _ in 0..1000 {
+            let mut game: super::Othello = super::Othello::with_players(
+                &random::RandomPlayer('X'),
+                &minimax::MinimaxPlayer('O'),
+                4,
+                4,
+            );
+            game.run();
+            assert_ne!(1, game.get_winner_number());
+        }
     }
 }

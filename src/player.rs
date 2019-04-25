@@ -1,4 +1,4 @@
-use crate::game::Othello;
+use crate::Othello;
 
 pub trait Player {
     fn get_symbol(&self) -> char;

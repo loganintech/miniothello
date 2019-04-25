@@ -14,3 +14,7 @@ with_random = ["rand"]
 [[bin]]
 name = "othello"
 path = "src/main.rs"
+
+[lib]
+name = "othlib"
+path = "src/lib.rs"
