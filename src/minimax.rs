@@ -4,7 +4,7 @@ use crate::player::Player;
 pub struct MinimaxPlayer(pub char);
 
 impl MinimaxPlayer {
-    fn minimax(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), usize) {
+    fn minimax(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), isize) {
         let player_symbol = self.get_symbol();
         let opponent_symbol = game.symbol_from_player(
             //The ! changes an ActivePlayer::PlayerOne into ActivePlayer::PlayerTwo and vice-versa
@@ -12,46 +12,55 @@ impl MinimaxPlayer {
                 .player_from_symbol(self.get_symbol())
                 .expect("Tried to match symbol for someone not in the game."),
         );
+        //If we're maximizing, we increase from isize::MIN, otherwise we decrease from isize::MAX
+        let (mut best_res, turn_symbol) = if maximize {
+            (std::isize::MIN, player_symbol)
+        } else {
+            (std::isize::MAX, opponent_symbol)
+        };
+
+        // println!(
+        //     "Playing to {} symbol {}",
+        //     if maximize { "maximize" } else { "minimize" },
+        //     turn_symbol
+        // );
+
+        let successors = game.successors(turn_symbol);
+        let mut successors = successors.iter().peekable();
 
         //If there is no more game to play
         if !game.has_more_moves() {
             let counts = game.board().char_counts();
-            let our_count = counts.get(&player_symbol).unwrap_or(&0);
-            let opponent_count = counts.get(&opponent_symbol).unwrap_or(&0);
-
-            //If we won, return how much we won by
-            return if our_count > opponent_count {
-                ((0, 0), our_count - opponent_count) // Don't punish quick victories (7 - 0 is better than 25 - 23)
-            } else {
-                ((0, 0), 0)
-            };
+            let our_count = *counts.get(&player_symbol).unwrap_or(&0) as isize;
+            let opponent_count = *counts.get(&opponent_symbol).unwrap_or(&0) as isize;
+            let (next_row, next_col) = **successors.peek().unwrap_or(&&(0, 0));
+            // println!(
+            //     "({}, {}) [{}] {} - [{}] {} = {}",
+            //     next_row,
+            //     next_col,
+            //     player_symbol,
+            //     our_count,
+            //     opponent_symbol,
+            //     opponent_count,
+            //     our_count - opponent_count
+            // );
+            return ((next_row, next_col), our_count - opponent_count);
         }
 
-        // Maximize ourselves, minimize opponents
-        let symbol = if maximize {
-            player_symbol
-        } else {
-            opponent_symbol
-        };
-
         //If we're at this point the game isn't over but we can't move so let's let our opponent move.
-        if !game.symbol_has_more_moves(symbol) {
+        if !game.symbol_has_more_moves(turn_symbol) {
             return self.minimax(game, !maximize);
         }
 
-        //If we're maximizing, we increase from 0, otherwise we decrease from usize::MAX
-        let mut best_res = if maximize {
-            std::usize::MIN
-        } else {
-            std::usize::MAX
-        };
         let mut best_coords = (game.board().rows(), game.board().cols());
 
-        for (row, col) in game.successors(symbol) {
+        for (row, col) in successors {
+            let row = *row;
+            let col = *col;
             let mut new_game: Othello = game.clone();
-            new_game.play_move(row, col, symbol);
+            new_game.play_move(row, col, turn_symbol);
             let result = self.minimax(&mut new_game, !maximize).1;
-            if (maximize && result >= best_res) || (!maximize && result <= best_res) {
+            if (maximize && result > best_res) || (!maximize && result < best_res) {
                 best_res = result;
                 best_coords = (row, col);
             }
