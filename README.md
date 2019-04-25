@@ -17,6 +17,10 @@ Player 2 (O) score: 2
 
 Player 1 (X) move:
 Enter row (or ?): 3
+Enter col (or ?): -2
+You must enter positive numerical numerical values.
+Enter col (or ?): what
+You must enter positive numerical numerical values.
 Enter col (or ?): ?
 Moves:
 Row: 0, Col: 2
