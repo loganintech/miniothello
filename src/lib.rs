@@ -366,7 +366,7 @@ mod test {
 
     #[test]
     fn try_minimax() {
-        let iterations = 100;
+        let iterations = 10;
         for i in 0..iterations {
             println!("Running Game: {} {} left", i, iterations - i);
             let mut game = Othello::with_players(
