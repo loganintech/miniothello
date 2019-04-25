@@ -19,32 +19,12 @@ impl MinimaxPlayer {
             (std::isize::MAX, opponent_symbol)
         };
 
-        // println!(
-        //     "Playing to {} symbol {}",
-        //     if maximize { "maximize" } else { "minimize" },
-        //     turn_symbol
-        // );
-
-        let successors = game.successors(turn_symbol);
-        let mut successors = successors.iter().peekable();
-
         //If there is no more game to play
         if !game.has_more_moves() {
             let counts = game.board().char_counts();
             let our_count = *counts.get(&player_symbol).unwrap_or(&0) as isize;
             let opponent_count = *counts.get(&opponent_symbol).unwrap_or(&0) as isize;
-            let (next_row, next_col) = **successors.peek().unwrap_or(&&(0, 0));
-            println!(
-                "({}, {}) [{}] {} - [{}] {} = {}",
-                next_row,
-                next_col,
-                player_symbol,
-                our_count,
-                opponent_symbol,
-                opponent_count,
-                our_count - opponent_count
-            );
-            return ((next_row, next_col), our_count - opponent_count);
+            return ((0, 0), our_count - opponent_count);
         }
 
         //If we're at this point the game isn't over but we can't move so let's let our opponent move.
@@ -54,9 +34,7 @@ impl MinimaxPlayer {
 
         let mut best_coords = (game.board().rows(), game.board().cols());
 
-        for (row, col) in successors {
-            let row = *row;
-            let col = *col;
+        for (row, col) in game.successors(turn_symbol) {
             let mut new_game: Othello = game.clone();
             new_game.play_move(row, col, turn_symbol);
             let result = self.minimax(&mut new_game, !maximize).1;
@@ -65,7 +43,6 @@ impl MinimaxPlayer {
                 best_coords = (row, col);
             }
         }
-
         (best_coords, best_res)
     }
 }
@@ -76,7 +53,7 @@ impl Player for MinimaxPlayer {
     }
 
     fn get_move(&self, game: &Othello) -> (usize, usize) {
-        // let game = dbg!(game);
-        self.minimax(&mut game.clone(), true).0
+        let res = self.minimax(&mut game.clone(), true);
+        res.0
     }
 }

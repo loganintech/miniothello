@@ -16,6 +16,10 @@ impl Board {
     pub fn cols(&self) -> usize {
         self.cols
     }
+
+    pub fn with_state(rows: usize, cols: usize, grid: Vec<Vec<Option<char>>>) -> Self {
+        Self { rows, cols, grid }
+    }
 }
 
 impl Board {

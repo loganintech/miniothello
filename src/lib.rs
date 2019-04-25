@@ -1,9 +1,4 @@
 pub mod board;
-pub mod human;
-#[cfg(feature = "with_random")]
-pub mod random;
-
-pub mod minimax;
 pub mod player;
 
 use crate::board::*;
@@ -235,13 +230,13 @@ impl<'a> Othello<'a> {
                 self.get_active_symbol()
             )
         }
-        self.change_active_player();
         found_valid_move
     }
 
     pub fn play_move(&mut self, row: usize, col: usize, symbol: char) {
         self.board.set_cell(row, col, symbol);
         self.flip_pieces(row, col, symbol);
+        self.change_active_player();
     }
 
     fn flip_helper(&mut self, row: usize, col: usize, symbol: char, direction: Direction) -> usize {
@@ -313,19 +308,28 @@ impl<'a> Othello<'a> {
         successors
     }
 
-    pub fn run(&mut self) {
+    pub fn run(&mut self) -> usize {
+        let mut iter_count = if self.active_player() == ActivePlayer::PlayerOne {
+            0
+        } else {
+            1
+        };
+        let mut results = [true, true];
         while self.has_more_moves() {
-            let p1_success = self.next_turn();
-            if !self.has_more_moves() {
+            results[iter_count] = self.next_turn();
+            if !results[0] && !results[1] {
                 break;
             }
-            let p2_success = self.next_turn();
 
-            if !p1_success && !p2_success {
-                eprintln!("Both players failed to play");
-                break;
+            // If we're on the second iteration and they aren't both true, reset them
+            if iter_count == 1 {
+                results[0] = true;
+                results[1] = true;
             }
+            iter_count = (iter_count + 1) % 2;
         }
+
+        self.get_winner_number()
     }
 }
 
@@ -354,11 +358,14 @@ impl<'a> fmt::Debug for Othello<'a> {
 
 #[cfg(test)]
 mod test {
-    use super::*;
+    use super::{player::*, *};
+
     #[cfg(feature = "with_random")]
     #[test]
     fn try_1000_results() {
-        for _ in 0..1000 {
+        let iterations = 1000;
+        for i in 0..iterations {
+            println!("Running Game: {} {} left", i, iterations - i);
             let mut game: super::Othello = super::Othello::with_players(
                 &random::RandomPlayer('X'),
                 &minimax::MinimaxPlayer('O'),
@@ -369,4 +376,25 @@ mod test {
             assert_ne!(1, game.get_winner_number());
         }
     }
+
+    // #[test]
+    // fn specific_minimax() {
+    //     let mut board = vec![
+    //         vec![Some('X'), None, None, None],
+    //         vec![Some('X'), Some('X'), Some('X'), None],
+    //         vec![Some('X'), Some('O'), Some('X'), Some('X')],
+    //         vec![None, Some('O'), Some('O'), Some('O')],
+    //     ];
+    //     board.reverse(); //It has to be reversed for order to be correct.
+    //     let mut game: Othello = Othello {
+    //         p_one: &specific::SpecificPlayer::new('X', &[(3, 2), (0, 0)]),
+    //         p_two: &minimax::MinimaxPlayer('O'),
+    //         active_player: ActivePlayer::PlayerTwo,
+    //         board: Board::with_state(4, 4, board),
+    //     };
+
+    //     let res = game.run();
+    //     dbg!(game);
+    //     assert_ne!(1, res);
+    // }
 }

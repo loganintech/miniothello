@@ -1,11 +1,9 @@
 #![warn(clippy::all)]
 
-#[cfg(feature = "with_random")]
-use othlib::random::*;
+use othlib::player::{human::*, minimax::*, Player};
 
-use othlib::human::*;
-use othlib::minimax::*;
-use othlib::player::*;
+#[cfg(feature = "with_random")]
+use othlib::player::random::*;
 
 use std::env::args;
 
