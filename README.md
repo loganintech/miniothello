@@ -4,38 +4,48 @@
 
 The program won't let you play an invalid move. Bots (minimax or random) will move without user input.
 
-```
+Quickstart:
+
+```bash
+$ make
+Compiling simplified_othello v0.1.0 (PATH)
+Finished release [optimized] target(s) in 1.03s
+
+The othello command was added to this folder
+$ ./othello human minimax
+
 Player 1 (X) score: 2
 Player 2 (O) score: 2
 
-3:| . . . .
-2:| . O X .
-1:| . X O .
-0:| . . . .
+3:| . ? . .
+2:| ? O X .
+1:| . X O ?
+0:| . . ? .
    ---------
     0 1 2 3
 
 Player 1 (X) move:
-Enter row (or ?): 3
-Enter col (or ?): -2
-You must enter positive numerical numerical values.
-Enter col (or ?): what
-You must enter positive numerical numerical values.
-Enter col (or ?): ?
-Moves:
+Enter row (or ?): ?
 Row: 0, Col: 2
 Row: 1, Col: 3
 Row: 2, Col: 0
 Row: 3, Col: 1
+Enter row (or ?): 3
+Enter col (or ?): ?
+Row: 3, Col: 1
+Enter col (or ?): -2
+You must enter positive numerical numerical values.
+Enter col (or ?): what
+You must enter positive numerical numerical values.
 Enter col (or ?): 1
 [Selected] Row: 3, Col: 1
 
 Player 1 (X) score: 4
 Player 2 (O) score: 1
 
-3:| . X . .
+3:| ? X ? .
 2:| . X X .
-1:| . X O .
+1:| ? X O .
 0:| . . . .
    ---------
     0 1 2 3
@@ -47,9 +57,9 @@ Player 1 (X) score: 3
 Player 2 (O) score: 3
 
 3:| O X . .
-2:| . O X .
-1:| . X O .
-0:| . . . .
+2:| ? O X .
+1:| . X O ?
+0:| . . ? .
    ---------
     0 1 2 3
 
