@@ -1,6 +1,5 @@
 //! A container module for the random player
 
-
 use crate::player::Player;
 use crate::Othello;
 use rand::{thread_rng, Rng};
@@ -17,6 +16,6 @@ impl Player for RandomPlayer {
     fn get_move(&self, game: &Othello) -> (usize, usize) {
         let mut rng = thread_rng();
         let successors = game.successors(self.get_symbol());
-        successors.get(rng.gen() % successors.len()).unwrap_or((0, 0))
+        successors[rng.gen::<usize>() % successors.len()]
     }
 }
