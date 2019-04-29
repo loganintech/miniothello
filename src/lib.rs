@@ -91,7 +91,6 @@
 //! ./othello <player> <player> [SIZE] [SIZE] # I wouldn't suggest over 5x5. It will take your computer a long time (minutes or hours) to finish this game.
 //! ```
 
-
 #![allow(dead_code)]
 #![deny(clippy::all)]
 
@@ -554,17 +553,13 @@ mod test {
 
     #[test]
     fn try_minimax() {
-        let iterations = 10;
-        for i in 0..iterations {
-            println!("Running Game: {} {} left", i, iterations - i);
-            let mut game = Othello::with_players(
-                &minimax::MinimaxPlayer('X'),
-                &minimax::MinimaxPlayer('O'),
-                4,
-                4,
-            );
-            game.run();
-            assert_ne!(1, game.get_winner_number());
-        }
+        let mut game = Othello::with_players(
+            &minimax::MinimaxPlayer('X'),
+            &minimax::MinimaxPlayer('O'),
+            4,
+            4,
+        );
+        game.run();
+        assert_ne!(1, game.get_winner_number());
     }
 }
