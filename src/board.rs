@@ -66,31 +66,6 @@ impl Board {
 
 impl fmt::Display for Board {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut build = "".to_string();
-
-        for row in (0..self.rows).rev() {
-            write!(build, "{}:|", row)?;
-            for col in 0..self.cols {
-                write!(build, " {}", self.grid[row][col].unwrap_or('.'))?;
-            }
-            writeln!(build)?;
-        }
-
-        writeln!(
-            build,
-            "   {}",
-            std::iter::repeat("-")
-                .take((self.cols * 2) + 1)
-                .collect::<String>()
-        )?;
-        writeln!(
-            build,
-            "    {}",
-            (0..self.cols).fold(String::new(), |mut accum, val| {
-                accum.push_str(&format!("{} ", val));
-                accum
-            })
-        )?;
-        write!(f, "{}", build)
+        write!(f, "{}x{}", self.rows(), self.cols())
     }
 }

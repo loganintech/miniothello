@@ -99,7 +99,8 @@ pub mod player;
 
 use crate::board::*;
 use crate::player::Player;
-use std::fmt;
+
+use std::fmt::{self, Write};
 use std::iter::Take;
 
 /// # Direction
@@ -508,14 +509,51 @@ impl<'a> Othello<'a> {
 impl<'a> fmt::Display for Othello<'a> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let counts = self.board.char_counts();
-        let build = format!(
-            "\nPlayer 1 ({}) score: {}\nPlayer 2 ({}) score: {}",
+        let mut build = format!(
+            "\nPlayer 1 ({}) score: {}\nPlayer 2 ({}) score: {}\n\n",
             self.p_one.get_symbol(),
             counts.get(&self.p_one.get_symbol()).unwrap_or(&0),
             self.p_two.get_symbol(),
             counts.get(&self.p_two.get_symbol()).unwrap_or(&0)
         );
-        write!(f, "{}\n\n{}", build, self.board)
+
+        let successors = self.successors(self.symbol_from_player(self.active_player()));
+
+        for row in (0..self.board().rows()).rev() {
+            write!(build, "{}:|", row)?;
+            for col in 0..self.board().cols() {
+                write!(
+                    build,
+                    " {}",
+                    self.board().get_cell(row, col).unwrap_or_else(|| {
+                        if successors.contains(&(row, col)) {
+                            '?'
+                        } else {
+                            '.'
+                        }
+                    })
+                )?;
+            }
+            writeln!(build)?;
+        }
+
+        writeln!(
+            build,
+            "   {}",
+            std::iter::repeat("-")
+                .take((self.board().cols() * 2) + 1)
+                .collect::<String>()
+        )?;
+        writeln!(
+            build,
+            "    {}",
+            (0..self.board().cols()).fold(String::new(), |mut accum, val| {
+                accum.push_str(&format!("{} ", val));
+                accum
+            })
+        )?;
+
+        write!(f, "{}", build)
     }
 }
 
@@ -535,7 +573,6 @@ mod test {
 
     #[cfg(feature = "with_random")]
     #[test]
-    #[ignore]
     fn try_random() {
         let iterations = 1000;
         for i in 0..iterations {
