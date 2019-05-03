@@ -1,6 +1,5 @@
 //! A container module for the specific player
 
-
 use crate::player::Player;
 use crate::Othello;
 use std::cell::RefCell;

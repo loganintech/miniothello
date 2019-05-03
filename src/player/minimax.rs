@@ -1,6 +1,5 @@
 //! A container module for the minimax player
 
-
 use crate::player::Player;
 use crate::Othello;
 
@@ -33,10 +32,7 @@ impl MinimaxPlayer {
 
         //If there is no more game to play
         if !game.has_more_moves() {
-            let counts = game.board().char_counts();
-            let our_count = *counts.get(&player_symbol).unwrap_or(&0) as isize;
-            let opponent_count = *counts.get(&opponent_symbol).unwrap_or(&0) as isize;
-            return ((0, 0), our_count - opponent_count);
+            return ((0, 0), self.utility(&game));
         }
 
         //If we're at this point the game isn't over but we can't move so let's let our opponent move.
@@ -57,6 +53,19 @@ impl MinimaxPlayer {
         }
 
         (best_coords, best_res)
+    }
+
+    fn utility(&self, game: &Othello) -> isize {
+        let opponent_symbol = game.symbol_from_player(
+            !game
+                .player_from_symbol(self.get_symbol())
+                .expect("Tried to match symbol for someone not in the game."),
+        );
+        let counts = game.board().char_counts();
+        let our_count = *counts.get(&self.get_symbol()).unwrap_or(&0) as isize;
+        let opponent_count = *counts.get(&opponent_symbol).unwrap_or(&0) as isize;
+
+        our_count - opponent_count
     }
 }
 
