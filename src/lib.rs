@@ -588,15 +588,15 @@ mod test {
         }
     }
 
-    // #[test]
-    // fn try_minimax() {
-    //     let mut game = Othello::with_players(
-    //         &minimax::MinimaxPlayer('X'),
-    //         &minimax::MinimaxPlayer('O'),
-    //         4,
-    //         4,
-    //     );
-    //     game.run();
-    //     assert_ne!(1, game.get_winner_number());
-    // }
+    #[test]
+    fn try_minimax() {
+        let mut game = Othello::with_players(
+            &minimax::MinimaxPlayer('X'),
+            &minimax::MinimaxPlayer('O'),
+            4,
+            4,
+        );
+        game.run();
+        assert_ne!(1, game.get_winner_number());
+    }
 }
