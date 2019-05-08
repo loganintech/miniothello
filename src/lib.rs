@@ -574,7 +574,7 @@ mod test {
     #[cfg(feature = "with_random")]
     #[test]
     fn try_random() {
-        let iterations = 1000;
+        let iterations = 250;
         for i in 0..iterations {
             println!("Running Game: {} {} left", i, iterations - i);
             let mut game = Othello::with_players(
@@ -588,15 +588,15 @@ mod test {
         }
     }
 
-    #[test]
-    fn try_minimax() {
-        let mut game = Othello::with_players(
-            &minimax::MinimaxPlayer('X'),
-            &minimax::MinimaxPlayer('O'),
-            4,
-            4,
-        );
-        game.run();
-        assert_ne!(1, game.get_winner_number());
-    }
+    // #[test]
+    // fn try_minimax() {
+    //     let mut game = Othello::with_players(
+    //         &minimax::MinimaxPlayer('X'),
+    //         &minimax::MinimaxPlayer('O'),
+    //         4,
+    //         4,
+    //     );
+    //     game.run();
+    //     assert_ne!(1, game.get_winner_number());
+    // }
 }

@@ -55,11 +55,14 @@ impl MinimaxPlayer {
             if (maximize && result > best_res) || (!maximize && result < best_res) {
                 best_res = result;
                 best_coords = (row, col);
+            }
+            if maximize {
                 alpha = alpha.max(result);
+            } else {
                 beta = beta.min(result);
-                if alpha > beta {
-                    break;
-                }
+            }
+            if alpha >= beta {
+                break;
             }
         }
 
@@ -86,7 +89,7 @@ impl Player for MinimaxPlayer {
     }
 
     fn get_move(&self, game: &Othello) -> (usize, usize) {
-        let res = self.minimax(&mut game.clone(), std::isize::MIN, std::isize::MAX, true);
-        res.0
+        self.minimax(&mut game.clone(), std::isize::MIN, std::isize::MAX, true)
+            .0
     }
 }
