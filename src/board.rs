@@ -4,7 +4,7 @@
 //! It only keeps an NxM grid of `Option<char>`s. This entire API is safe.
 
 use std::collections::HashMap;
-use std::fmt::{self, Write};
+use std::fmt;
 
 #[derive(Clone, Debug)]
 pub struct Board {
