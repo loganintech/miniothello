@@ -15,7 +15,13 @@ impl MinimaxPlayer {
     /// # An implementation of the minimax recursive algorithm for finding scores.
     ///
     /// Read more about it on wikipedia: https://en.wikipedia.org/wiki/Computer_Othello#Search_techniques
-    fn minimax(&self, game: &mut Othello, maximize: bool) -> ((usize, usize), isize) {
+    fn minimax(
+        &self,
+        game: &mut Othello,
+        mut alpha: isize,
+        mut beta: isize,
+        maximize: bool,
+    ) -> ((usize, usize), isize) {
         let player_symbol = self.get_symbol();
         let opponent_symbol = game.symbol_from_player(
             //The ! changes an ActivePlayer::PlayerOne into ActivePlayer::PlayerTwo and vice-versa
@@ -37,7 +43,7 @@ impl MinimaxPlayer {
 
         //If we're at this point the game isn't over but we can't move so let's let our opponent move.
         if !game.symbol_has_more_moves(turn_symbol) {
-            return self.minimax(game, !maximize);
+            return self.minimax(game, alpha, beta, !maximize);
         }
 
         let mut best_coords = (0, 0);
@@ -45,10 +51,15 @@ impl MinimaxPlayer {
         for (row, col) in game.successors(turn_symbol) {
             let mut new_game: Othello = game.clone();
             new_game.play_move(row, col, turn_symbol);
-            let result = self.minimax(&mut new_game, !maximize).1;
+            let result = self.minimax(&mut new_game, alpha, beta, !maximize).1;
             if (maximize && result > best_res) || (!maximize && result < best_res) {
                 best_res = result;
                 best_coords = (row, col);
+                alpha = alpha.max(result);
+                beta = beta.min(result);
+                if alpha > beta {
+                    break;
+                }
             }
         }
 
@@ -75,7 +86,7 @@ impl Player for MinimaxPlayer {
     }
 
     fn get_move(&self, game: &Othello) -> (usize, usize) {
-        let res = self.minimax(&mut game.clone(), true);
+        let res = self.minimax(&mut game.clone(), std::isize::MIN, std::isize::MAX, true);
         res.0
     }
 }
