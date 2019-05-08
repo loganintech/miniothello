@@ -574,7 +574,7 @@ mod test {
     #[cfg(feature = "with_random")]
     #[test]
     fn try_random() {
-        let iterations = 10000;
+        let iterations = 1000;
         for i in 0..iterations {
             println!("Running Game: {} {} left", i, iterations - i);
             let mut game = Othello::with_players(
